@@ -9,7 +9,10 @@ local action_state = require("telescope.actions.state")
 local sorters = require("telescope.config").values.generic_sorter
 
 -- Meta class
-Loom = {  keymap, projects }
+Loom = {
+  keymap = {},
+  projects = {},
+}
 
 function Loom:new(keymap, projects)
   local o = {}
@@ -65,7 +68,7 @@ local open_actions = {
   { name = open_actions_enum.open_current_win },
 }
 
-local function projectPicker(actionWithPath)
+function Loom:projectPicker(actionWithPath)
 
   -- Create the picker
   pickers.new({}, {
@@ -82,44 +85,57 @@ local function projectPicker(actionWithPath)
     }),
     sorter = sorters({}),
     attach_mappings = function(prompt_bufnr, map)
+      local default_picker_binding = {
+        open_split = "<C-S>",
+        open_vsplit = "<C-s>",
+        open_current_window = "<C-w>",
+        open_new_tab = "<C-t>",
+      }
 
-      map("i", "<C-s>", function()
-        local selection = action_state.get_selected_entry(prompt_bufnr)
-        if selection then
-          local path = vim.fn.expand(selection.value.path)
-          actions.close(prompt_bufnr) -- Close the picker
-          path_to_vsplit(path)
+      local mappings = {
+        [self.keymap.open_split or default_picker_binding.open_split] = function ()
+          local selection = action_state.get_selected_entry(prompt_bufnr)
+          if selection then
+            local path = vim.fn.expand(selection.value.path)
+            actions.close(prompt_bufnr) -- Close the picker
+            path_to_split(path)
+          end
+        end,
+        [self.keymap.open_vsplit or default_picker_binding.open_vsplit] = function ()
+          local selection = action_state.get_selected_entry(prompt_bufnr)
+          if selection then
+            local path = vim.fn.expand(selection.value.path)
+            actions.close(prompt_bufnr) -- Close the picker
+            path_to_split(path)
+          end
+        end ,
+        [self.keymap.open_current_window or default_picker_binding.open_current_window] = function ()
+          local selection = action_state.get_selected_entry(prompt_bufnr)
+          if selection then
+            local path = vim.fn.expand(selection.value.path)
+            local name = vim.fn.expand(selection.value.name)
+            actions.close(prompt_bufnr) -- Close the picker
+            path_to_current_window(path, name)
+          end
+        end,
+        [self.keymap.open_new_tab or default_picker_binding.open_new_tab] = function ()
+          local selection = action_state.get_selected_entry(prompt_bufnr)
+          if selection then
+            local path = vim.fn.expand(selection.value.path)
+            local name = vim.fn.expand(selection.value.name)
+            actions.close(prompt_bufnr) -- Close the picker
+            path_to_new_tab(path, name)
+          end
         end
-      end)
+      }
 
-      map("i", "<C-S>", function()
-        local selection = action_state.get_selected_entry(prompt_bufnr)
-        if selection then
-          local path = vim.fn.expand(selection.value.path)
-          actions.close(prompt_bufnr) -- Close the picker
-          path_to_split(path)
-        end
-      end)
-
-      map("i", "<C-t>", function()
-        local selection = action_state.get_selected_entry(prompt_bufnr)
-        if selection then
-          local path = vim.fn.expand(selection.value.path)
-          local name = vim.fn.expand(selection.value.name)
-          actions.close(prompt_bufnr) -- Close the picker
-          path_to_new_tab(path, name)
-        end
-      end)
-
-      map("i", "<C-w>", function()
-        local selection = action_state.get_selected_entry(prompt_bufnr)
-        if selection then
-          local path = vim.fn.expand(selection.value.path)
-          local name = vim.fn.expand(selection.value.name)
-          actions.close(prompt_bufnr) -- Close the picker
-          path_to_current_window(path, name)
-        end
-      end)
+      for key,func in pairs(mappings) do
+        vim.keymap.set("i", key, function()
+          func()
+        end, {
+            buffer = buf, nowait = true, noremap = true, silent = true
+          })
+      end
 
       -- Define what happens on selection
       actions.select_default:replace(function(prompt_bufnr)
@@ -184,38 +200,35 @@ local function projectPicker(actionWithPath)
 end
 
 function Loom:open()
-  projectPicker()
-  -- TODO :: open telescope
+  Loom:projectPicker()
 end
 
 local function open_project_in_vsplit()
-  projectPicker(function (path, nactionWithPatame)
+  Loom:projectPicker(function (path)
     path_to_vsplit(path)
   end)
 end
 
 local function open_project_in_split()
-  projectPicker(function (path, name)
+  Loom:projectPicker(function (path)
     path_to_split(path)
   end)
 end
 
 local function open_project_in_current_window()
-  projectPicker(function (path, name)
+  Loom:projectPicker(function (path, name)
     path_to_current_window(path, name)
   end)
 end
 
 local function open_project_in_new_tab()
-  projectPicker(function (path, name)
+  Loom:projectPicker(function (path, name)
     path_to_new_tab(path, name)
   end)
 end
 
-
-
 function Loom:set_mappings()
-  local defaultGitKeymap = {
+  local defaultPrependMapping = {
     open_split = "<leader>opS",
     open_vsplit = "<leader>ops",
     open_current_window = "<leader>opw",
@@ -223,16 +236,16 @@ function Loom:set_mappings()
   }
 
   local mappings = {
-    [self.keymap.open_split or defaultGitKeymap.open_split] = function ()
+    [self.keymap.open_split or defaultPrependMapping.open_split] = function ()
       open_project_in_split()
     end,
-    [self.keymap.open_vsplit or defaultGitKeymap.open_vsplit] = function ()
+    [self.keymap.open_vsplit or defaultPrependMapping.open_vsplit] = function ()
       open_project_in_vsplit()
     end ,
-    [self.keymap.open_current_window or defaultGitKeymap.open_current_window] = function ()
+    [self.keymap.open_current_window or defaultPrependMapping.open_current_window] = function ()
       open_project_in_current_window()
     end,
-    [self.keymap.open_new_tab or defaultGitKeymap.open_new_tab] = function ()
+    [self.keymap.open_new_tab or defaultPrependMapping.open_new_tab] = function ()
       open_project_in_new_tab()
     end
   }
@@ -245,22 +258,6 @@ function Loom:set_mappings()
       })
   end
 
-  -- Disable key while using the plugin
-  local other_chars = {
-    't','a', 'b', 'e', 'f', 'i', 'n', 'o', 'r', 'v', 'w', 'x', 'y', 'z'
-  }
-
-  for k,v in ipairs(other_chars) do
-    -- api.nvim_buf_set_keymap(buf, 'n', v, '', { nowait = true, noremap = true, silent = true })
-    -- api.nvim_buf_set_keymap(buf, 'n', v:upper(), '', { nowait = true, noremap = true, silent = true })
-    -- api.nvim_buf_set_keymap(buf, 'n',  '<c-'..v..'>', '', { nowait = true, noremap = true, silent = true })
-  end
-
-end
-
-local function window(content, opts)
-  -- Window:open_window()
-  -- api.nvim_win_set_cursor(win, {4, 0})
 end
 
 return Loom
