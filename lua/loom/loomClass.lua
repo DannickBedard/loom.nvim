@@ -51,6 +51,19 @@ local function path_to_current_window(path, name)
   end
 end
 
+local open_actions_enum = {
+  open_split = "open_split",
+  open_vsplit = "open_vsplit",
+  open_new_tab = "open_new_tab",
+  open_current_win = "open_current_win",
+}
+
+local open_actions = {
+  { name = open_actions_enum.open_split },
+  { name = open_actions_enum.open_vsplit },
+  { name = open_actions_enum.open_new_tab },
+  { name = open_actions_enum.open_current_win },
+}
 
 local function projectPicker(actionWithPath)
 
@@ -70,7 +83,7 @@ local function projectPicker(actionWithPath)
     sorter = sorters({}),
     attach_mappings = function(prompt_bufnr, map)
 
-       map("i", "<C-s>", function()
+      map("i", "<C-s>", function()
         local selection = action_state.get_selected_entry(prompt_bufnr)
         if selection then
           local path = vim.fn.expand(selection.value.path)
@@ -79,7 +92,7 @@ local function projectPicker(actionWithPath)
         end
       end)
 
-       map("i", "<C-S>", function()
+      map("i", "<C-S>", function()
         local selection = action_state.get_selected_entry(prompt_bufnr)
         if selection then
           local path = vim.fn.expand(selection.value.path)
@@ -115,7 +128,55 @@ local function projectPicker(actionWithPath)
         local name = vim.fn.expand(selection.value.name)
         actions.close(prompt_bufnr)
 
-        actionWithPath(path, name)
+        if actionWithPath then
+          actionWithPath(path, name)
+        else
+          -- Fallback on a action selector
+          pickers.new({}, {
+            prompt_title = "Select action",
+            finder = finders.new_table({
+              results = open_actions, -- TODO changer
+              entry_maker = function(item)
+                return {
+                  value = item,
+                  display = item.name,
+                  ordinal = item.name,
+                }
+              end,
+            }),
+            sorter = sorters({}),
+            attach_mappings = function(prompt_bufnr, map)
+              -- Define what happens on selection
+              actions.select_default:replace(function(prompt_bufnr)
+                local selection_action = action_state.get_selected_entry(prompt_bufnr)
+
+                local action_name = vim.fn.expand(selection_action.value.name)
+
+                actions.close(prompt_bufnr)
+
+                print(action_name)
+                if action_name == open_actions_enum.open_split then
+                  path_to_split(path)
+                end
+
+                if action_name == open_actions_enum.open_vsplit then
+                  path_to_vsplit(path)
+                end
+
+                if action_name == open_actions_enum.open_current_win then
+                  path_to_current_window(path)
+                end
+
+                if action_name == open_actions_enum.open_new_tab then
+                  path_to_new_tab(path)
+                end
+
+              end)
+              return true
+            end,
+          }):find()
+        end
+
       end)
       return true
     end,
@@ -128,7 +189,7 @@ function Loom:open()
 end
 
 local function open_project_in_vsplit()
-  projectPicker(function (path, name)
+  projectPicker(function (path, nactionWithPatame)
     path_to_vsplit(path)
   end)
 end
@@ -158,7 +219,7 @@ function Loom:set_mappings()
     open_split = "<leader>opS",
     open_vsplit = "<leader>ops",
     open_current_window = "<leader>opw",
-    open_new_tab = "<ealder>opt",
+    open_new_tab = "<leader>opt",
   }
 
   local mappings = {
