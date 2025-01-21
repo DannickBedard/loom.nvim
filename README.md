@@ -73,6 +73,7 @@ return {
 ## Future Improvements
 
 - Add support for custom keymaps for specific projects. For example, within the project object, you could specify keymaps to open the project in a specific layout (e.g., split, new tab, etc.) directly without going through the picker.
+- Add healthcheck support : https://neovim.io/doc/user/health.html#health-dev
 
 ---
 
