@@ -183,11 +183,11 @@ function Loom:projectPicker(actionWithPath)
                 end
 
                 if action_name == open_actions_enum.open_current_win then
-                  path_to_current_window(path)
+                  path_to_current_window(path, name)
                 end
 
                 if action_name == open_actions_enum.open_new_tab then
-                  path_to_new_tab(path)
+                  path_to_new_tab(path, name)
                 end
 
               end)
