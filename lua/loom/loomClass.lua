@@ -133,11 +133,7 @@ function Loom:projectPicker(actionWithPath)
       }
 
       for key,func in pairs(mappings) do
-        vim.keymap.set("i", key, function()
-          func()
-        end, {
-            buffer = buf, nowait = true, noremap = true, silent = true
-          })
+        map("i", key, func)
       end
 
       -- Define what happens on selection
