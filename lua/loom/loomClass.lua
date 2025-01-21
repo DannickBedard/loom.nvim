@@ -14,6 +14,8 @@ Loom = {
   projects = {},
 }
 
+local lualine_available, _ = pcall(require, "lualine")
+
 function Loom:new(keymap, projects)
   local o = {}
   setmetatable(o, self)
@@ -41,7 +43,7 @@ local function path_to_new_tab(path, name)
   vim.cmd("tabnew")              -- Open a vertical split
   vim.cmd("lcd " .. path)         -- Set the local working directory for the new split
   vim.cmd("edit .")
-  if name then
+  if name and lualine_available then
     vim.cmd("LualineRenameTab " .. name) -- Rename tab for the current project
   end
 end
@@ -49,7 +51,8 @@ end
 local function path_to_current_window(path, name)
   vim.cmd("lcd " .. path)
   vim.cmd("edit .") -- Open the file browser in the project directory
-  if name then
+  if name and lualine_available then
+
     vim.cmd("LualineRenameTab " .. name) -- Rename tab for the current project
   end
 end
