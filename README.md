@@ -1,5 +1,8 @@
 # loom.nvim
 
+![loomnvim](https://github.com/user-attachments/assets/412d1419-a96f-4bc9-8ae1-404fa2ddd515)
+
+
 **loom.nvim** is a Neovim plugin that enhances your workflow by allowing you to quickly switch between predefined projects using the Telescope picker. You can customize project paths, keybindings, and easily open projects in splits, tabs, or the current window.
 
 Open the project picker
