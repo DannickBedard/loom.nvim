@@ -6,6 +6,8 @@ function M.setup(opts)
   local keymapOpenPicker = (opts.keymaps and opts.keymaps.open_picker) or "<leader>op"
 
   local Loom = require("loom.loomClass")
+
+
   Loom:new(opts.keymaps, opts.projects)
   Loom:set_mappings() -- Will take the mapping pass into the constructor
 

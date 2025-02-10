@@ -5,6 +5,8 @@ local pickers = require("telescope.pickers")
 local finders = require("telescope.finders")
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
+local JsonFile = require("loom.json_file")
+local helper = require("loom.helper.helper")
 
 local sorters = require("telescope.config").values.generic_sorter
 
@@ -71,13 +73,21 @@ local open_actions = {
   { name = open_actions_enum.open_current_win },
 }
 
+function Loom:getProjects()
+
+  local json = JsonFile:new("./data.json");
+  local dynamicProject = json:read();
+
+   return helper.merge_table(Loom.projects, dynamicProject)
+end
+
 function Loom:projectPicker(actionWithPath)
 
   -- Create the picker
   pickers.new({}, {
     prompt_title = "Select a Project",
     finder = finders.new_table({
-      results = Loom.projects,
+      results = Loom:getProjects(),
       entry_maker = function(item)
         return {
           value = item,
