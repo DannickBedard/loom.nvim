@@ -7,8 +7,7 @@ function M.setup(opts)
 
   local Loom = require("loom.loomClass")
 
-
-  Loom:new(opts.keymaps, opts.projects)
+  Loom:new(opts.keymaps, opts.projects, opts.options)
   Loom:set_mappings() -- Will take the mapping pass into the constructor
 
   vim.keymap.set("n", keymapOpenPicker, function()
@@ -20,6 +19,17 @@ function M.setup(opts)
     end
   end
   )
+end
+
+function M.addDirToProject()
+ -- TODO :: add current dir to project... add input to it 
+  local Loom = require("loom.loomClass")
+  Loom:add_project_to_local_storage()
+end
+
+function M.pane()
+  local pane = require("loom.dynamicProject")
+  pane.show_pane()
 end
 
 return M

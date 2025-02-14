@@ -14,16 +14,20 @@ local sorters = require("telescope.config").values.generic_sorter
 Loom = {
   keymap = {},
   projects = {},
+  options = {
+    pickerIgnoreDir = false
+  },
 }
 
 local lualine_available, _ = pcall(require, "lualine")
 
-function Loom:new(keymap, projects)
+function Loom:new(keymap, projects, options)
   local o = {}
   setmetatable(o, self)
   self.__index = self
   self.keymap = keymap or {}
   self.projects = projects or {}
+  self.options = options or {}
   return o
 end
 
@@ -75,10 +79,21 @@ local open_actions = {
 
 function Loom:getProjects()
 
-  local json = JsonFile:new("./data.json");
+  local json = JsonFile:new(vim.fn.expand("~/.config/nvimPlug/loom.nvim/lua/loom/data.json"));
   local dynamicProject = json:read();
 
-   return helper.merge_table(Loom.projects, dynamicProject)
+  print"projects : "
+  print(vim.inspect(Loom.projects))
+
+  print"dynamicProject : "
+  print(vim.inspect(dynamicProject))
+
+  local test = helper.merge_table(dynamicProject, Loom.projects)
+  print"merged : "
+  print(vim.inspect(test))
+
+  return helper.merge_table(Loom.projects, dynamicProject)
+
 end
 
 function Loom:projectPicker(actionWithPath)
@@ -89,10 +104,16 @@ function Loom:projectPicker(actionWithPath)
     finder = finders.new_table({
       results = Loom:getProjects(),
       entry_maker = function(item)
+        local ordinal = item.name .. " (" .. item.path .. ")"
+
+        if  Loom.options.pickerIgnoreDir then
+          ordinal = item.name
+        end
+
         return {
           value = item,
-          display = item.name,
-          ordinal = item.name,
+          display = item.name .. " (" .. item.path .. ")",
+          ordinal = ordinal
         }
       end,
     }),
@@ -236,12 +257,27 @@ local function open_project_in_new_tab()
   end)
 end
 
+function Loom:add_project_to_local_storage()
+  local currentDir = vim.loop.cwd()
+  local projectName = vim.fn.input("Project name: ", "")
+
+  local json = JsonFile:new(vim.fn.expand("~/.config/nvimPlug/loom.nvim/lua/loom/data.json"));
+  local newProject = {
+    name = projectName,
+    path = currentDir
+  }
+
+  json:append(newProject)
+end
+
 function Loom:set_mappings()
   local defaultPrependMapping = {
     open_split = "<leader>opS",
     open_vsplit = "<leader>ops",
     open_current_window = "<leader>opw",
     open_new_tab = "<leader>opt",
+    add_project = "<leader>opt",
+    remove_project = "<leader>opt",
   }
 
   local mappings = {

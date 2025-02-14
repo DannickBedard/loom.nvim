@@ -92,3 +92,11 @@ return {
 
 Enjoy seamless project navigation with **loom.nvim**!
 
+## TODOS : 
+
+Dynamic project : 
+- [x] Make a json file to store project
+- [ ] keybind to add current workdir into the json file
+- [ ] keybind to remove current workdir from the json file
+- [ ] keybind to promt a harpoon like editor to edit the project list.
+    - [ ] structure => Name -> filepath 
