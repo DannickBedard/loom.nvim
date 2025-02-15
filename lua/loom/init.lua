@@ -21,15 +21,4 @@ function M.setup(opts)
   )
 end
 
-function M.addDirToProject()
- -- TODO :: add current dir to project... add input to it 
-  local Loom = require("loom.loomClass")
-  Loom:add_project_to_local_storage()
-end
-
-function M.pane()
-  local pane = require("loom.dynamicProject")
-  pane.show_pane()
-end
-
 return M

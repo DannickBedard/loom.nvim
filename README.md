@@ -100,3 +100,4 @@ Dynamic project :
 - [ ] keybind to remove current workdir from the json file
 - [ ] keybind to promt a harpoon like editor to edit the project list.
     - [ ] structure => Name -> filepath 
+- [ ] keybind to put in the clipboard the current dynamic config into settings for the plugin. If you wan to add more permanent project

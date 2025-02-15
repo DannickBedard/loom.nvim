@@ -257,19 +257,6 @@ local function open_project_in_new_tab()
   end)
 end
 
-function Loom:add_project_to_local_storage()
-  local currentDir = vim.loop.cwd()
-  local projectName = vim.fn.input("Project name: ", "")
-
-  local json = JsonFile:new(vim.fn.expand("~/.config/nvimPlug/loom.nvim/lua/loom/data.json"));
-  local newProject = {
-    name = projectName,
-    path = currentDir
-  }
-
-  json:append(newProject)
-end
-
 function Loom:set_mappings()
   local defaultPrependMapping = {
     open_split = "<leader>opS",
