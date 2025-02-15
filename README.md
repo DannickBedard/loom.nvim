@@ -52,6 +52,19 @@ return {
     })
   end,
 }
+
+## API
+
+```lua
+
+local dynamicProject = require("loom.dynamicProject")
+
+-- Add current project working dir to the dynamic projects
+vim.keymap.set('n', 'yourKeyMap', dynamicProject.add_project_to_local_storage)
+
+-- Open pane listing the dynamic project. In this pane you can edit the dynamic projects (name and path)
+vim.keymap.set('n', 'yourKeyMap', dynamicProject.show_projects_pane)
+
 ```
 
 ---
