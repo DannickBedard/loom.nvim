@@ -53,6 +53,8 @@ return {
   end,
 }
 
+```
+
 ## API
 
 ```lua
@@ -68,6 +70,9 @@ vim.keymap.set('n', 'yourKeyMap', dynamicProject.show_projects_pane)
 ```
 
 ---
+
+
+
 
 ## Features
 
