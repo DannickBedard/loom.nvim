@@ -23,7 +23,10 @@ Using **lazy.nvim**:
 ```lua
 return {
   "DannickBedard/loom.nvim",
-  dependencies = { "nvim-telescope/telescope.nvim" },
+    dependencies = { 
+        "nvim-telescope/telescope.nvim",
+        "nvim-lua/plenary.nvim" 
+    },
   config = function()
     local projects = {
       { name = "project1", path = "~/Documents/project1" },
@@ -56,13 +59,13 @@ return {
 
 ```lua
 
-local dynamicProject = require("loom.dynamicProject")
+local loom = require("loom")
 
 -- Add current project working dir to the dynamic projects
-vim.keymap.set('n', 'yourKeyMap', dynamicProject.add_project_to_local_storage)
+vim.keymap.set('n', 'yourKeyMap', loom.add_project_to_local_storage)
 
 -- Open pane listing the dynamic project. In this pane you can edit the dynamic projects (name and path)
-vim.keymap.set('n', 'yourKeyMap', dynamicProject.show_projects_pane)
+vim.keymap.set('n', 'yourKeyMap', loom.show_projects_pane)
 
 ```
 

@@ -21,4 +21,14 @@ function M.setup(opts)
   )
 end
 
+function M.add_project_to_local_storage()
+  local loomProject = require("loom.dynamicProject")
+  loomProject.add_project_to_local_storage()
+end
+
+function M.show_projects_pane()
+  local loomProject = require("loom.dynamicProject")
+  loomProject.show_projects_pane()
+end
+
 return M

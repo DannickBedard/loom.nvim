@@ -3,7 +3,7 @@ local Path = require("plenary.path")
 local M = {}
 local JsonFile = require("loom.json_file")
 
-local data_path = string.format("%s/loom", vim.fn.stdpath("data"))
+local data_path = string.format("%s%sloom", vim.fn.stdpath("data"), Path.sep)
 local ensured_data_path = false
 
 local function ensure_data_path()
@@ -21,8 +21,11 @@ end
 local function get_plugin_path()
   ensure_data_path()
 
-  return string.format("%s/%s.json", data_path, "data")
+  return string.format("%s%s%s.json", data_path,Path.sep ,"data")
 end
+
+
+local PathHelper = require("loom.PathHelper")
 
 local json_file_path = get_plugin_path()
 local data = {}
@@ -30,7 +33,7 @@ local pane_win = nil
 
 -- Save JSON file
 local function save_project_data()
-  local jsonLocalProject = JsonFile:new(json_file_path);
+  local jsonLocalProject = JsonFile:new(PathHelper.getPluginPath());
   jsonLocalProject:write(data)
 end
 
@@ -90,7 +93,7 @@ end
 -- Display Harpoon-like pane
 function M.show_projects_pane()
 
-  local jsonLocalProject = JsonFile:new(json_file_path);
+  local jsonLocalProject = JsonFile:new(PathHelper.getPluginPath());
   local dynamicProject = jsonLocalProject:read();
 
   if pane_win and vim.api.nvim_win_is_valid(pane_win) then
@@ -158,7 +161,7 @@ function M.add_project_to_local_storage()
   local currentDir = vim.loop.cwd()
   local projectName = vim.fn.input("Project name: ", "")
 
-  local json = JsonFile:new(json_file_path);
+  local json = JsonFile:new(PathHelper.getPluginPath());
   local newProject = {
     name = projectName,
     path = currentDir

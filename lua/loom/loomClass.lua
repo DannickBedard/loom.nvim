@@ -77,20 +77,11 @@ local open_actions = {
   { name = open_actions_enum.open_current_win },
 }
 
+local PathHelper = require("loom.PathHelper")
 function Loom:getProjects()
 
-  local json = JsonFile:new(vim.fn.expand("~/.config/nvimPlug/loom.nvim/lua/loom/data.json"));
+  local json = JsonFile:new(PathHelper.getPluginPath());
   local dynamicProject = json:read();
-
-  print"projects : "
-  print(vim.inspect(Loom.projects))
-
-  print"dynamicProject : "
-  print(vim.inspect(dynamicProject))
-
-  local test = helper.merge_table(dynamicProject, Loom.projects)
-  print"merged : "
-  print(vim.inspect(test))
 
   return helper.merge_table(Loom.projects, dynamicProject)
 
