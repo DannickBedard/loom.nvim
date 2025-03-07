@@ -5,6 +5,8 @@ local pickers = require("telescope.pickers")
 local finders = require("telescope.finders")
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
+local JsonFile = require("loom.json_file")
+local helper = require("loom.helper.helper")
 
 local sorters = require("telescope.config").values.generic_sorter
 
@@ -12,16 +14,20 @@ local sorters = require("telescope.config").values.generic_sorter
 Loom = {
   keymap = {},
   projects = {},
+  options = {
+    pickerIgnoreDir = false
+  },
 }
 
 local lualine_available, _ = pcall(require, "lualine")
 
-function Loom:new(keymap, projects)
+function Loom:new(keymap, projects, options)
   local o = {}
   setmetatable(o, self)
   self.__index = self
   self.keymap = keymap or {}
   self.projects = projects or {}
+  self.options = options or {}
   return o
 end
 
@@ -71,18 +77,34 @@ local open_actions = {
   { name = open_actions_enum.open_current_win },
 }
 
+local PathHelper = require("loom.PathHelper")
+function Loom:getProjects()
+
+  local json = JsonFile:new(PathHelper.getPluginPath());
+  local dynamicProject = json:read();
+
+  return helper.merge_table(Loom.projects, dynamicProject)
+
+end
+
 function Loom:projectPicker(actionWithPath)
 
   -- Create the picker
   pickers.new({}, {
     prompt_title = "Select a Project",
     finder = finders.new_table({
-      results = Loom.projects,
+      results = Loom:getProjects(),
       entry_maker = function(item)
+        local ordinal = item.name .. " (" .. item.path .. ")"
+
+        if  Loom.options.pickerIgnoreDir then
+          ordinal = item.name
+        end
+
         return {
           value = item,
-          display = item.name,
-          ordinal = item.name,
+          display = item.name .. " (" .. item.path .. ")",
+          ordinal = ordinal
         }
       end,
     }),
@@ -232,6 +254,8 @@ function Loom:set_mappings()
     open_vsplit = "<leader>ops",
     open_current_window = "<leader>opw",
     open_new_tab = "<leader>opt",
+    add_project = "<leader>opt",
+    remove_project = "<leader>opt",
   }
 
   local mappings = {

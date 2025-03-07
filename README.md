@@ -1,8 +1,5 @@
 # loom.nvim
 
-![loomnvim](https://github.com/user-attachments/assets/412d1419-a96f-4bc9-8ae1-404fa2ddd515)
-
-
 **loom.nvim** is a Neovim plugin that enhances your workflow by allowing you to quickly switch between predefined projects using the Telescope picker. You can customize project paths, keybindings, and easily open projects in splits, tabs, or the current window.
 
 Open the project picker
@@ -26,7 +23,10 @@ Using **lazy.nvim**:
 ```lua
 return {
   "DannickBedard/loom.nvim",
-  dependencies = { "nvim-telescope/telescope.nvim" },
+    dependencies = { 
+        "nvim-telescope/telescope.nvim",
+        "nvim-lua/plenary.nvim" 
+    },
   config = function()
     local projects = {
       { name = "project1", path = "~/Documents/project1" },
@@ -52,9 +52,27 @@ return {
     })
   end,
 }
+
+```
+
+## API
+
+```lua
+
+local loom = require("loom")
+
+-- Add current project working dir to the dynamic projects
+vim.keymap.set('n', 'yourKeyMap', loom.add_project_to_local_storage)
+
+-- Open pane listing the dynamic project. In this pane you can edit the dynamic projects (name and path)
+vim.keymap.set('n', 'yourKeyMap', loom.show_projects_pane)
+
 ```
 
 ---
+
+
+
 
 ## Features
 
@@ -92,3 +110,12 @@ return {
 
 Enjoy seamless project navigation with **loom.nvim**!
 
+## TODOS : 
+
+Dynamic project : 
+- [x] Make a json file to store project
+- [ ] keybind to add current workdir into the json file
+- [ ] keybind to remove current workdir from the json file
+- [ ] keybind to promt a harpoon like editor to edit the project list.
+    - [ ] structure => Name -> filepath 
+- [ ] keybind to put in the clipboard the current dynamic config into settings for the plugin. If you wan to add more permanent project
