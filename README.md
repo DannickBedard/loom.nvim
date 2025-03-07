@@ -114,8 +114,8 @@ Enjoy seamless project navigation with **loom.nvim**!
 
 Dynamic project : 
 - [x] Make a json file to store project
-- [ ] keybind to add current workdir into the json file
-- [ ] keybind to remove current workdir from the json file
-- [ ] keybind to promt a harpoon like editor to edit the project list.
-    - [ ] structure => Name -> filepath 
+- [x] keybind to add current workdir into the json file
+- [x] keybind to remove current workdir from the json file
+- [x] keybind to promt a harpoon like editor to edit the project list.
+    - [x] structure => Name -> filepath 
 - [ ] keybind to put in the clipboard the current dynamic config into settings for the plugin. If you wan to add more permanent project
