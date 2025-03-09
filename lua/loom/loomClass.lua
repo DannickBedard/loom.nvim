@@ -95,7 +95,7 @@ function Loom:projectPicker(actionWithPath)
     finder = finders.new_table({
       results = Loom:getProjects(),
       entry_maker = function(item)
-        local ordinal = item.name .. " (" .. item.path .. ")"
+        local ordinal = item.name .. " -> (" .. item.path .. ")"
 
         if  Loom.options.pickerIgnoreDir then
           ordinal = item.name
@@ -103,7 +103,7 @@ function Loom:projectPicker(actionWithPath)
 
         return {
           value = item,
-          display = item.name .. " (" .. item.path .. ")",
+          display = item.name .. " -> (" .. item.path .. ")",
           ordinal = ordinal
         }
       end,
@@ -111,8 +111,8 @@ function Loom:projectPicker(actionWithPath)
     sorter = sorters({}),
     attach_mappings = function(prompt_bufnr, map)
       local default_picker_binding = {
-        open_split = "<C-S>",
-        open_vsplit = "<C-s>",
+        open_split = "<C-s>",
+        open_vsplit = "<C-v>",
         open_current_window = "<C-w>",
         open_new_tab = "<C-t>",
       }
@@ -131,7 +131,7 @@ function Loom:projectPicker(actionWithPath)
           if selection then
             local path = vim.fn.expand(selection.value.path)
             actions.close(prompt_bufnr) -- Close the picker
-            path_to_split(path)
+            path_to_vsplit(path)
           end
         end ,
         [self.keymap.open_current_window or default_picker_binding.open_current_window] = function ()
@@ -159,10 +159,13 @@ function Loom:projectPicker(actionWithPath)
       end
 
       -- Define what happens on selection
+      --  This is a prompt that ask what to do with the selected project.
+      --  Notes : You could have used the shortcut to do the action on item instead of selecting
       actions.select_default:replace(function(prompt_bufnr)
         local selection = action_state.get_selected_entry(prompt_bufnr)
         local path = vim.fn.expand(selection.value.path)
         local name = vim.fn.expand(selection.value.name)
+
         actions.close(prompt_bufnr)
 
         if actionWithPath then
@@ -250,14 +253,15 @@ end
 
 function Loom:set_mappings()
   local defaultPrependMapping = {
-    open_split = "<leader>opS",
-    open_vsplit = "<leader>ops",
+    open_split = "<leader>ops",
+    open_vsplit = "<leader>opv",
     open_current_window = "<leader>opw",
     open_new_tab = "<leader>opt",
     add_project = "<leader>opt",
     remove_project = "<leader>opt",
   }
 
+  -- Mapping for pre-actions. 
   local mappings = {
     [self.keymap.open_split or defaultPrependMapping.open_split] = function ()
       open_project_in_split()
