@@ -35,13 +35,13 @@ return {
 
     local keymaps = {
       open_picker = "<leader>fp",          -- Open the project picker
-      picker_open_split = "<C-S>",        -- Open project in a split (inside the picker)
-      picker_open_vsplit = "<C-s>",       -- Open project in a vertical split (inside the picker)
+      picker_open_split = "<C-s>",        -- Open project in a split (inside the picker)
+      picker_open_vsplit = "<C-v>",       -- Open project in a vertical split (inside the picker)
       picker_open_tab = "<C-t>",          -- Open project in a new tab (inside the picker)
       picker_open_current_win = "<C-w>", -- Open project in the current window (inside the picker)
 
-      open_in_split = "<leader>opS",      -- Directly open picker for horizontal split
-      open_in_vsplit = "<leader>ops",     -- Directly open picker for vertical split
+      open_in_split = "<leader>ops",      -- Directly open picker for horizontal split
+      open_in_vsplit = "<leader>opv",     -- Directly open picker for vertical split
       open_in_tab = "<leader>opt",        -- Directly open picker for a tab
       open_in_current_win = "<leader>opw" -- Directly open picker for the current window
     }
